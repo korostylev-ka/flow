@@ -76,6 +76,15 @@ class FeedFragment : Fragment() {
             if (it != 0) binding.fabNewPosts.isVisible = true
             println("Numbers of newposts  $it")
         }
+        //скроллим вверх
+        viewModel.data.observe(viewLifecycleOwner) { postList ->
+            val newPosts = postList.posts.size > adapter.currentList.size
+            adapter.submitList(postList.posts) {
+                if (newPosts) {
+                    binding.list.smoothScrollToPosition(0)
+                }
+            }
+        }
 
         binding.swiperefresh.setOnRefreshListener {
             viewModel.refreshPosts()
@@ -89,8 +98,6 @@ class FeedFragment : Fragment() {
             viewModel.update()
             //делаем кнопку снова невидимой
             binding.fabNewPosts.isVisible = false
-            //скролл вверх
-            binding.list.scrollToPosition(0)
         }
 
         return binding.root
